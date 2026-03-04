@@ -1,0 +1,301 @@
+/* 
+ * SUBEB Yobe State - Official Government Theme
+ * Based on Bootstrap 5.3
+ */
+
+:root {
+    --subeb-green: #006400; /* Deep Government Green */
+    --subeb-green-light: #198754;
+    --subeb-accent: #f0ad4e; /* Subtle Gold/Yellow Accent */
+    --subeb-gray: #f8f9fa;
+    --subeb-text: #333333;
+    --subeb-border: #e9ecef;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--subeb-text);
+    line-height: 1.6;
+}
+
+/* --- Utility Bar --- */
+.utility-bar {
+    background-color: var(--subeb-green);
+    color: white;
+    font-size: 0.85rem;
+    padding: 5px 0;
+}
+.utility-bar a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+}
+.utility-bar a:hover {
+    text-decoration: underline;
+}
+
+/* --- Navbar --- */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: white;
+}
+.navbar-brand img {
+    height: 50px; /* Adjust based on actual logo */
+}
+.navbar-brand span {
+    font-weight: 700;
+    color: var(--subeb-green);
+    font-size: 1.2rem;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+.nav-link {
+    font-weight: 500;
+    color: #444 !important;
+    padding: 0.5rem 1rem !important;
+    transition: color 0.3s;
+}
+.nav-link:hover, .nav-link.active {
+    color: var(--subeb-green) !important;
+}
+.btn-portal {
+    background-color: var(--subeb-green);
+    color: white;
+    font-weight: 600;
+}
+.btn-portal:hover {
+    background-color: #004d00;
+    color: white;
+}
+
+/* --- Hero Section --- */
+.hero-section .carousel-item {
+    height: 500px;
+    background-color: #333; /* Fallback */
+    position: relative;
+}
+.hero-section .carousel-item img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    opacity: 0.6; /* Darken for text readability */
+}
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right, rgba(0,100,0,0.7), rgba(0,0,0,0.3));
+    display: flex;
+    align-items: center;
+}
+.hero-content {
+    color: white;
+    max-width: 800px;
+}
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+.hero-text {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+}
+.trusted-badge {
+    background-color: #f8f9fa;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+}
+
+/* --- Stats Strip --- */
+.stats-strip {
+    background-color: white;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--subeb-border);
+}
+.stat-box {
+    text-align: center;
+    padding: 20px;
+    border-right: 1px solid var(--subeb-border);
+}
+.stat-box:last-child {
+    border-right: none;
+}
+.stat-icon {
+    font-size: 2rem;
+    color: var(--subeb-green);
+    margin-bottom: 10px;
+}
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    display: block;
+}
+.stat-label {
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+/* --- Section General --- */
+section {
+    padding: 60px 0;
+}
+.section-title {
+    color: var(--subeb-green);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+.section-title::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 3px;
+    background-color: var(--subeb-accent);
+    margin-top: 5px;
+}
+.bg-light-gray {
+    background-color: var(--subeb-gray);
+}
+
+/* --- Cards --- */
+.card {
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--subeb-border);
+    font-weight: 600;
+    color: var(--subeb-green);
+}
+
+/* --- Mandate Cards --- */
+.mandate-card {
+    text-align: center;
+    padding: 30px 20px;
+    height: 100%;
+    border: 1px solid var(--subeb-border);
+    background: white;
+}
+.mandate-icon {
+    font-size: 2.5rem;
+    color: var(--subeb-green-light);
+    margin-bottom: 15px;
+}
+
+/* --- Departments Accordion --- */
+.accordion-button:not(.collapsed) {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: var(--subeb-green);
+}
+.accordion-button:focus {
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}
+
+/* --- Timeline (Programmes) --- */
+.timeline-item {
+    border-left: 3px solid var(--subeb-green);
+    padding-left: 20px;
+    margin-bottom: 30px;
+    position: relative;
+}
+.timeline-item::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: var(--subeb-green);
+    border-radius: 50%;
+    position: absolute;
+    left: -7.5px;
+    top: 5px;
+}
+
+/* --- Data Table --- */
+.table-responsive {
+    border: 1px solid var(--subeb-border);
+    border-radius: 5px;
+}
+.table thead th {
+    background-color: var(--subeb-green);
+    color: white;
+    border: none;
+}
+
+/* --- Needs Assessment Process --- */
+.process-step {
+    text-align: center;
+    position: relative;
+    margin-bottom: 20px;
+}
+.step-number {
+    width: 40px;
+    height: 40px;
+    background-color: var(--subeb-green);
+    color: white;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* --- Footer --- */
+footer {
+    background-color: #212529;
+    color: #aaa;
+    padding: 60px 0 20px;
+}
+footer h5 {
+    color: white;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+footer ul {
+    list-style: none;
+    padding: 0;
+}
+footer ul li {
+    margin-bottom: 10px;
+}
+footer a {
+    color: #aaa;
+    text-decoration: none;
+}
+footer a:hover {
+    color: white;
+}
+.footer-bottom {
+    border-top: 1px solid #333;
+    margin-top: 40px;
+    padding-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    .stat-box {
+        border-right: none;
+        border-bottom: 1px solid var(--subeb-border);
+    }
+}

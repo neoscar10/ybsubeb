@@ -1,0 +1,26 @@
+
+   INFO  Running migrations.  
+
+  2025_12_31_083241_create_students_table  13.20ms FAIL
+
+   Illuminate\Database\QueryException 
+
+  SQLSTATE[42S01]: Base table or view already exists: 1050 Table 'students' already exists (Connection: mysql, SQL: create table `students` (`id` bigint unsigned not null auto_increment primary key, `school_id` bigint unsigned not null, `class_id` bigint unsigned not null, `admission_no` varchar(255) null, `first_name` varchar(255) not null, `last_name` varchar(255) not null, `other_name` varchar(255) null, `gender` varchar(255) not null, `date_of_birth` date null, `guardian_name` varchar(255) null, `guardian_phone` varchar(255) null, `address` text null, `enrollment_date` date null, `status` varchar(255) not null default 'active', `created_by` bigint unsigned null, `updated_by` bigint unsigned null, `created_at` timestamp null, `updated_at` timestamp null) default character set utf8mb4 collate 'utf8mb4_unicode_ci')
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:825
+    821▕                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    822▕                 );
+    823▕             }
+    824▕ 
+  ➜ 825▕             throw new QueryException(
+    826▕                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    827▕             );
+    828▕         }
+    829▕     }
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connection.php:571
+      PDOException::("SQLSTATE[42S01]: Base table or view already exists: 1050 Table 'students' already exists")
+
+  2   vendor\laravel\framework\src\Illuminate\Database\Connection.php:571
+      PDOStatement::execute()
+

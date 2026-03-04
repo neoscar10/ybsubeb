@@ -1,0 +1,92 @@
+/**
+ * Velzon Custom Brand Overrides
+ * Primary Color: #0B6E4F (Nigerian Green)
+ */
+
+:root, [data-theme], [data-layout] {
+    /* Primary Color Variables */
+    --vz-primary: #0B6E4F !important;
+    --vz-primary-rgb: 11, 110, 79 !important;
+    --vz-primary-bg-subtle: rgba(11, 110, 79, 0.15) !important;
+    --vz-primary-border-subtle: rgba(11, 110, 79, 0.3) !important;
+    --vz-primary-text-emphasis: #08553d !important;
+    
+    /* Link Colors */
+    --vz-link-color: #0B6E4F !important;
+    --vz-link-color-rgb: 11, 110, 79 !important;
+    --vz-link-hover-color: #08553d !important;
+    --vz-link-hover-color-rgb: 8, 85, 61 !important;
+
+    /* Bootstrap Overrides */
+    --bs-primary: #0B6E4F !important;
+    --bs-primary-rgb: 11, 110, 79 !important;
+    --bs-link-color: #0B6E4F !important;
+    --bs-link-hover-color: #08553d !important;
+}
+
+/* Button Overrides to ensure correct states */
+.btn-primary {
+    --vz-btn-bg: #0B6E4F !important;
+    --vz-btn-border-color: #0B6E4F !important;
+    --vz-btn-hover-bg: #08553d !important;
+    --vz-btn-hover-border-color: #08553d !important;
+    --vz-btn-focus-shadow-rgb: 11, 110, 79 !important;
+    --vz-btn-active-bg: #08553d !important;
+    --vz-btn-active-border-color: #08553d !important;
+    --vz-btn-disabled-bg: #0B6E4F !important;
+    --vz-btn-disabled-border-color: #0B6E4F !important;
+}
+
+.btn-outline-primary {
+    --vz-btn-color: #0B6E4F !important;
+    --vz-btn-border-color: #0B6E4F !important;
+    --vz-btn-hover-bg: #0B6E4F !important;
+    --vz-btn-hover-border-color: #0B6E4F !important;
+    --vz-btn-active-bg: #0B6E4F !important;
+    --vz-btn-active-border-color: #0B6E4F !important;
+}
+
+.btn-soft-primary {
+    --vz-btn-color: #0B6E4F !important;
+    --vz-btn-bg: rgba(11, 110, 79, 0.1) !important;
+    --vz-btn-border-color: transparent !important;
+    --vz-btn-hover-bg: #0B6E4F !important;
+    --vz-btn-hover-color: #fff !important;
+    --vz-btn-active-bg: #0B6E4F !important;
+    --vz-btn-active-color: #fff !important;
+}
+
+/* Pagination */
+.page-item.active .page-link {
+    background-color: #0B6E4F !important;
+    border-color: #0B6E4F !important;
+}
+
+.page-link {
+    color: #0B6E4F !important;
+}
+
+.page-link:hover {
+    color: #08553d !important;
+}
+
+/* Form Check */
+.form-check-input:checked {
+    background-color: #0B6E4F !important;
+    border-color: #0B6E4F !important;
+}
+
+/* Nav Pills */
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color: #0B6E4F !important;
+}
+
+/* Text Primary */
+.text-primary {
+    color: #0B6E4F !important;
+}
+
+/* Background Primary */
+.bg-primary {
+    background-color: #0B6E4F !important;
+}

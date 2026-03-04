@@ -1,0 +1,30 @@
+
+   INFO  Running migrations.  
+
+  2025_12_31_083241_create_students_table   
+  ⇂ create table `students` (`id` bigint unsigned not null auto_increment primary key, `school_id` bigint unsigned not null, `class_id` bigint unsigned not null, `admission_no` varchar(255) null, `first_name` varchar(255) not null, `last_name` varchar(255) not null, `other_name` varchar(255) null, `gender` varchar(255) not null, `date_of_birth` date null, `guardian_name` varchar(255) null, `guardian_phone` varchar(255) null, `address` text null, `enrollment_date` date null, `status` varchar(255) not null default 'active', `created_by` bigint unsigned null, `updated_by` bigint unsigned null, `created_at` timestamp null, `updated_at` timestamp null) default character set utf8mb4 collate 'utf8mb4_unicode_ci'  
+  ⇂ alter table `students` add constraint `students_school_id_foreign` foreign key (`school_id`) references `schools` (`id`) on delete cascade  
+  ⇂ alter table `students` add constraint `students_class_id_foreign` foreign key (`class_id`) references `subeb_classes` (`id`)  
+  ⇂ alter table `students` add constraint `students_created_by_foreign` foreign key (`created_by`) references `users` (`id`) on delete set null  
+  ⇂ alter table `students` add constraint `students_updated_by_foreign` foreign key (`updated_by`) references `users` (`id`) on delete set null  
+  ⇂ alter table `students` add unique `students_school_id_admission_no_unique`(`school_id`, `admission_no`)  
+  2026_01_01_225256_create_needs_assessment_tables   
+  ⇂ drop table if exists `needs_attachments`  
+  ⇂ drop table if exists `needs_items`  
+  ⇂ drop table if exists `needs_assessments`  
+  ⇂ drop table if exists `assessment_windows`  
+  ⇂ create table `assessment_windows` (`id` bigint unsigned not null auto_increment primary key, `title` varchar(255) not null, `scope` varchar(255) null, `opens_at` datetime not null, `closes_at` datetime not null, `status` enum('draft', 'open', 'closed', 'archived') not null default 'draft', `note` text null, `created_by` bigint unsigned not null, `created_at` timestamp null, `updated_at` timestamp null) default character set utf8mb4 collate 'utf8mb4_unicode_ci'  
+  ⇂ alter table `assessment_windows` add constraint `assessment_windows_created_by_foreign` foreign key (`created_by`) references `users` (`id`)  
+  ⇂ create table `needs_assessments` (`id` bigint unsigned not null auto_increment primary key, `assessment_window_id` bigint unsigned not null, `school_id` bigint unsigned not null, `submitted_by` bigint unsigned null, `submitted_at` datetime null, `status` enum('draft', 'submitted', 'under_review', 'approved', 'rejected') not null default 'draft', `principal_comment` text null, `admin_comment` text null, `created_at` timestamp null, `updated_at` timestamp null) default character set utf8mb4 collate 'utf8mb4_unicode_ci'  
+  ⇂ alter table `needs_assessments` add constraint `needs_assessments_assessment_window_id_foreign` foreign key (`assessment_window_id`) references `assessment_windows` (`id`) on delete cascade  
+  ⇂ alter table `needs_assessments` add constraint `needs_assessments_school_id_foreign` foreign key (`school_id`) references `schools` (`id`) on delete cascade  
+  ⇂ alter table `needs_assessments` add constraint `needs_assessments_submitted_by_foreign` foreign key (`submitted_by`) references `users` (`id`)  
+  ⇂ alter table `needs_assessments` add unique `needs_assessments_assessment_window_id_school_id_unique`(`assessment_window_id`, `school_id`)  
+  ⇂ create table `needs_items` (`id` bigint unsigned not null auto_increment primary key, `needs_assessment_id` bigint unsigned not null, `category` varchar(255) not null, `title` varchar(255) not null, `description` text null, `quantity` int not null default '1', `unit` varchar(255) null, `priority` enum('low', 'medium', 'high', 'critical') not null, `estimated_cost` decimal(15, 2) null, `justification` text null, `status` enum('pending', 'approved', 'rejected') not null default 'pending', `decision_by` bigint unsigned null, `decided_at` datetime null, `decision_note` text null, `created_at` timestamp null, `updated_at` timestamp null) default character set utf8mb4 collate 'utf8mb4_unicode_ci'  
+  ⇂ alter table `needs_items` add constraint `needs_items_needs_assessment_id_foreign` foreign key (`needs_assessment_id`) references `needs_assessments` (`id`) on delete cascade  
+  ⇂ alter table `needs_items` add constraint `needs_items_decision_by_foreign` foreign key (`decision_by`) references `users` (`id`)  
+  ⇂ create table `needs_attachments` (`id` bigint unsigned not null auto_increment primary key, `needs_item_id` bigint unsigned null, `needs_assessment_id` bigint unsigned not null, `file_path` varchar(255) not null, `original_name` varchar(255) not null, `mime` varchar(255) not null, `size` int not null, `uploaded_by` bigint unsigned not null, `created_at` timestamp null, `updated_at` timestamp null) default character set utf8mb4 collate 'utf8mb4_unicode_ci'  
+  ⇂ alter table `needs_attachments` add constraint `needs_attachments_needs_item_id_foreign` foreign key (`needs_item_id`) references `needs_items` (`id`) on delete set null  
+  ⇂ alter table `needs_attachments` add constraint `needs_attachments_needs_assessment_id_foreign` foreign key (`needs_assessment_id`) references `needs_assessments` (`id`) on delete cascade  
+  ⇂ alter table `needs_attachments` add constraint `needs_attachments_uploaded_by_foreign` foreign key (`uploaded_by`) references `users` (`id`)  
+
