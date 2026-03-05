@@ -20,8 +20,12 @@ class Index extends Component
 
     public function mount()
     {
-        $latestWindow = AssessmentWindow::where('status', 'active')->latest()->first();
-        $this->filterWindow = $latestWindow ? $latestWindow->id : '';
+        try {
+            $latestWindow = AssessmentWindow::where('status', 'active')->latest()->first();
+            $this->filterWindow = $latestWindow ? $latestWindow->id : '';
+        } catch (\Exception $e) {
+            $this->filterWindow = '';
+        }
     }
 
     public function updatedFilterLga() { $this->dispatchCharts(); }
@@ -49,32 +53,32 @@ class Index extends Component
         if ($this->filterWindow) $needsQuery->where('assessment_window_id', $this->filterWindow);
         if ($this->filterLga) $needsQuery->whereHas('school', fn($q) => $q->where('lga', $this->filterLga));
 
-        $submittedCount = (clone $needsQuery)->where('status', '!=', 'draft')->count();
-        $pendingCount = (clone $needsQuery)->where('status', 'under_review')->count();
-        
-        // Estimated Cost (Needs Items)
-        $costQuery = NeedsItem::query()->whereHas('assessment', function($q) {
-             if ($this->filterWindow) $q->where('assessment_window_id', $this->filterWindow);
-             if ($this->filterLga) $q->whereHas('school', fn($sq) => $sq->where('lga', $this->filterLga));
-             $q->where('status', '!=', 'draft');
-        });
-        $totalCost = $costQuery->sum('estimated_cost');
-        
-        // Top Schools by Cost (calculated via DB query below for efficiency)
-        
         // Easier Top Cost query:
-        $hotList = DB::table('needs_items')
-            ->join('needs_assessments', 'needs_items.needs_assessment_id', '=', 'needs_assessments.id')
-            ->join('schools', 'needs_assessments.school_id', '=', 'schools.id')
-            ->select('schools.name', DB::raw('SUM(needs_items.estimated_cost) as total_cost'), DB::raw('COUNT(needs_items.id) as item_count'))
-            ->when($this->filterWindow, fn($q) => $q->where('needs_assessments.assessment_window_id', $this->filterWindow))
-            ->when($this->filterLga, fn($q) => $q->where('schools.lga', $this->filterLga))
-            ->groupBy('schools.id', 'schools.name')
-            ->orderByDesc('total_cost')
-            ->limit(5)
-            ->get();
+        $hotList = collect();
+        $windows = collect();
+        $submittedCount = 0;
+        $pendingCount = 0;
+        $totalCost = 0;
 
-        $windows = AssessmentWindow::latest()->get();
+        try {
+            $submittedCount = (clone $needsQuery)->where('status', '!=', 'draft')->count();
+            $pendingCount = (clone $needsQuery)->where('status', 'under_review')->count();
+            $totalCost = $costQuery->sum('estimated_cost');
+
+            $hotList = DB::table('needs_items')
+                ->join('needs_assessments', 'needs_items.needs_assessment_id', '=', 'needs_assessments.id')
+                ->join('schools', 'needs_assessments.school_id', '=', 'schools.id')
+                ->select('schools.name', DB::raw('SUM(needs_items.estimated_cost) as total_cost'), DB::raw('COUNT(needs_items.id) as item_count'))
+                ->when($this->filterWindow, fn($q) => $q->where('needs_assessments.assessment_window_id', $this->filterWindow))
+                ->when($this->filterLga, fn($q) => $q->where('schools.lga', $this->filterLga))
+                ->groupBy('schools.id', 'schools.name')
+                ->orderByDesc('total_cost')
+                ->limit(5)
+                ->get();
+
+            $windows = AssessmentWindow::latest()->get();
+        } catch (\Exception $e) { /* Tables might not exist */ }
+
         // LGAs hardcoded or from DB
         $lgas = [
             'Bade', 'Bursari', 'Damaturu', 'Fika', 'Fune', 'Geidam',
