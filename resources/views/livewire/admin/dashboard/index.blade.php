@@ -13,6 +13,14 @@
             </div>
         </div>
 
+        <!-- Missing Setup Banner -->
+        @if($missingSetup)
+            <div class="alert alert-warning shadow-sm border-0 mb-4" role="alert">
+                <i class="ri-alert-line me-2 align-middle fs-16 text-warning"></i>
+                <strong>Setup Incomplete:</strong> Missing required database tables (<code>assessment_windows</code> or <code>needs_items</code>). Please run database migrations on your server.
+            </div>
+        @endif
+
         <!-- Filters -->
         <div class="row">
             <div class="col-12">

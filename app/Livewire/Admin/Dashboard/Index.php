@@ -33,6 +33,11 @@ class Index extends Component
 
     public function render()
     {
+        $missingSetup = false;
+        if (!\Illuminate\Support\Facades\Schema::hasTable('assessment_windows') || !\Illuminate\Support\Facades\Schema::hasTable('needs_items')) {
+            $missingSetup = true;
+        }
+
         // KPIs
         $totalSchools = School::count();
         $activeSchools = School::where('status', true)->count(); // Assuming status column
@@ -87,6 +92,7 @@ class Index extends Component
         ];
 
         return view('livewire.admin.dashboard.index', [
+            'missingSetup' => $missingSetup,
             'totalSchools' => $totalSchools,
             'activeSchools' => $activeSchools,
             'totalStudents' => $totalStudents,
@@ -112,12 +118,15 @@ class Index extends Component
            ->get();
         
         // 2. Needs Categories
-        $needsCats = DB::table('needs_items')
-            ->join('needs_assessments', 'needs_items.needs_assessment_id', '=', 'needs_assessments.id')
-            ->when($this->filterWindow, fn($q) => $q->where('needs_assessments.assessment_window_id', $this->filterWindow))
-            ->select('category', DB::raw('count(*) as count'))
-            ->groupBy('category')
-            ->get();
+        $needsCats = collect();
+        if (\Illuminate\Support\Facades\Schema::hasTable('needs_items')) {
+            $needsCats = DB::table('needs_items')
+                ->join('needs_assessments', 'needs_items.needs_assessment_id', '=', 'needs_assessments.id')
+                ->when($this->filterWindow, fn($q) => $q->where('needs_assessments.assessment_window_id', $this->filterWindow))
+                ->select('category', DB::raw('count(*) as count'))
+                ->groupBy('category')
+                ->get();
+        }
 
         $this->dispatch('update-dashboard-charts', [
             'enrollmentLga' => [
