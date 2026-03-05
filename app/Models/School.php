@@ -74,6 +74,11 @@ class School extends Model
         return $this->hasMany(Student::class);
     }
 
+    public function staff()
+    {
+        return $this->hasMany(SchoolStaff::class);
+    }
+
     public function needsAssessments()
     {
         return $this->hasMany(NeedsAssessment::class);

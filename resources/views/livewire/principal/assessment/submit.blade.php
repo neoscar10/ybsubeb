@@ -229,16 +229,53 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Attachments (Optional)</label>
-                                    <input type="file" class="form-control" wire:model="newAttachments" multiple>
+                                    <input type="file" class="form-control" wire:model="newAttachments" multiple accept=".jpg,.jpeg,.png,.pdf">
                                     <div class="form-text">Max 10MB per file. Supported: JPG, PNG, PDF.</div>
                                     @error('newAttachments.*') <span class="text-danger text-sm">{{ $message }}</span> @enderror
                                     
-                                    <!-- Preview Selected Count -->
-                                    @if(!empty($newAttachments))
-                                        <div class="mt-2 text-info fs-12">
-                                            <i class="ri-file-upload-line"></i> {{ count($newAttachments) }} files selected
+                                    <!-- Loading Animation -->
+                                    <div wire:loading wire:target="newAttachments" class="mt-3">
+                                        <div class="d-flex align-items-center text-primary fs-13">
+                                            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                            <span>Preparing preview...</span>
                                         </div>
-                                    @endif
+                                    </div>
+
+                                    <!-- Preview Grid -->
+                                    <div wire:loading.remove wire:target="newAttachments">
+                                        @if(!empty($newAttachments))
+                                            <div class="mt-3 row g-2">
+                                                @foreach($newAttachments as $index => $file)
+                                                    <div class="col-sm-6 col-md-4">
+                                                        <div class="border rounded p-2 d-flex align-items-center bg-light">
+                                                            <div class="flex-shrink-0 me-2">
+                                                                @if(Str::startsWith($file->getMimeType(), 'image/') && in_array(strtolower($file->getClientOriginalExtension()), ['jpg', 'jpeg', 'png']))
+                                                                    <img src="{{ $file->temporaryUrl() }}" alt="preview" class="rounded object-fit-cover border" style="width: 40px; height: 40px;">
+                                                                @elseif(strtolower($file->getClientOriginalExtension()) === 'pdf')
+                                                                    <div class="rounded bg-white d-flex align-items-center justify-content-center text-danger border" style="width: 40px; height: 40px;">
+                                                                        <i class="ri-file-pdf-line fs-20"></i>
+                                                                    </div>
+                                                                @else
+                                                                    <div class="rounded bg-white d-flex align-items-center justify-content-center text-primary border" style="width: 40px; height: 40px;">
+                                                                        <i class="ri-file-line fs-20"></i>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <div class="flex-grow-1 overflow-hidden">
+                                                                <h6 class="fs-12 mb-0 text-truncate" title="{{ $file->getClientOriginalName() }}">{{ $file->getClientOriginalName() }}</h6>
+                                                                <span class="text-muted fs-11">{{ round($file->getSize() / 1024, 1) }} KB</span>
+                                                            </div>
+                                                            <div class="flex-shrink-0 ms-2">
+                                                                <button type="button" class="btn btn-sm btn-ghost-danger px-2 text-danger" wire:click.prevent="removeNewAttachment({{ $index }})" title="Remove">
+                                                                    <i class="ri-close-line fs-16"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>

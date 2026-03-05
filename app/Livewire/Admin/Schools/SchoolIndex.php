@@ -5,11 +5,13 @@ namespace App\Livewire\Admin\Schools;
 use App\Models\School;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class SchoolIndex extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -31,16 +33,28 @@ class SchoolIndex extends Component
     public $latitude, $longitude;
     public $notes;
     
-    // Stats
-    public $students_male = 0, $students_female = 0;
-    public $teachers_male = 0, $teachers_female = 0;
-    public $total_classrooms = 0;
-
     // Infrastructure
     public $has_water = false, $has_toilets = false, $has_electricity = false;
     // View Modal State
     public $showViewModal = false;
     public $viewSchool; // The school model instance for viewing
+
+    // Bulk Upload State
+    public $showChoiceModal = false;
+    public $showBulkModal = false;
+    public $csvFile;
+    public $importSummary = null;
+    
+    // Preview processing state
+    public $hasPreview = false;
+    public $headers = [];
+    public $previewRows = [];
+    public $totalRows = 0;
+    public $validRows = 0;
+    public $invalidRows = 0;
+    public $rowErrors = [];
+    public $stagedPath = '';
+    public $importToken = '';
 
     // ... (existing properties)
 
@@ -78,7 +92,13 @@ class SchoolIndex extends Component
             'has_principal' => (clone $statsQuery)->has('principal')->count(),
         ];
 
-        $schools = $query->latest()->paginate(10);
+        $schools = $query->withCount([
+            'students as students_count' => fn($q) => $q->where('status', 'active'),
+            'students as filtered_male' => fn($q) => $q->where('status', 'active')->where('gender', 'male'),
+            'students as filtered_female' => fn($q) => $q->where('status', 'active')->where('gender', 'female'),
+            'staff as filtered_teachers_male' => fn($q) => $q->where('is_active', true)->where('staff_type', 'teacher')->where('gender', 'male'),
+            'staff as filtered_teachers_female' => fn($q) => $q->where('is_active', true)->where('staff_type', 'teacher')->where('gender', 'female'),
+        ])->latest()->paginate(10);
 
         return view('livewire.admin.schools.school-index', [
             'schools' => $schools,
@@ -90,10 +110,259 @@ class SchoolIndex extends Component
 
     public function create()
     {
+        $this->showChoiceModal = true;
+    }
+
+    public function chooseSingle()
+    {
+        $this->showChoiceModal = false;
         $this->resetValidation();
         $this->resetForm();
         $this->editMode = false;
         $this->showModal = true;
+    }
+
+    public function chooseBulk()
+    {
+        $this->showChoiceModal = false;
+        $this->resetValidation();
+        $this->csvFile = null;
+        $this->importSummary = null;
+        $this->resetPreviewState();
+        $this->showBulkModal = true;
+    }
+
+    public function resetPreviewState()
+    {
+        $this->hasPreview = false;
+        $this->headers = [];
+        $this->previewRows = [];
+        $this->totalRows = 0;
+        $this->validRows = 0;
+        $this->invalidRows = 0;
+        $this->rowErrors = [];
+        $this->stagedPath = '';
+        $this->importToken = '';
+    }
+
+    public function replaceFile()
+    {
+        $this->resetPreviewState();
+        $this->csvFile = null;
+    }
+
+    public function downloadTemplate()
+    {
+        $headers = [
+            'name', 'code', 'school_type', 'lga', 'ward', 'community', 'address',
+            'has_water', 'has_toilets', 'has_electricity'
+        ];
+        
+        $sampleRow1 = ['Damaturu Primary School', 'DAM-001', 'primary', 'Damaturu', 'Nayi-Nawa', 'Central', '123 Main St', '1', '1', '1'];
+        $sampleRow2 = ['Potiskum JSS', 'POT-002', 'junior_secondary', 'Potiskum', 'Dogo Nini', 'North', '456 Market Rd', '1', '1', '0'];
+
+        $callback = function() use ($headers, $sampleRow1, $sampleRow2) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $headers);
+            fputcsv($file, $sampleRow1);
+            fputcsv($file, $sampleRow2);
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="schools_template.csv"',
+        ]);
+    }
+
+    public function stageCsvForPreview()
+    {
+        $this->validate([
+            'csvFile' => 'required|file|mimes:csv,txt|max:5120', // 5MB max
+        ]);
+
+        $this->resetPreviewState();
+
+        // Backup to a temp folder so it persists for the confirm step
+        $this->stagedPath = $this->csvFile->store('csv_imports', 'local');
+        $fullPath = Storage::disk('local')->path($this->stagedPath);
+        
+        $fileData = array_map('str_getcsv', file($fullPath));
+        
+        if (empty($fileData)) {
+            $this->addError('csvFile', 'The CSV file is empty.');
+            return;
+        }
+
+        $this->headers = array_map(function($header) {
+            return trim(strtolower($header));
+        }, array_shift($fileData));
+
+        $requiredHeaders = ['name', 'lga', 'school_type'];
+        foreach ($requiredHeaders as $req) {
+            if (!in_array($req, $this->headers)) {
+                $this->addError('csvFile', 'Invalid template. Missing required column Header: ' . $req);
+                return;
+            }
+        }
+
+        $this->totalRows = count($fileData);
+        $previewCount = 0;
+        $this->rowErrors = [];
+
+        foreach ($fileData as $index => $row) {
+            if (empty(array_filter($row))) {
+                $this->totalRows--; // Ignore completely blank rows
+                continue;
+            }
+
+            $rowNum = $index + 2; 
+
+            $rowData = [];
+            foreach ($this->headers as $colIndex => $colName) {
+                $rowData[$colName] = isset($row[$colIndex]) ? trim($row[$colIndex]) : null;
+            }
+
+            if ($previewCount < 10) {
+                $this->previewRows[] = $rowData;
+                $previewCount++;
+            }
+
+            $validator = \Illuminate\Support\Facades\Validator::make($rowData, [
+                'name' => 'required|string|max:255',
+                'lga' => 'required|string',
+                'school_type' => 'required|string',
+                'code' => 'nullable|string',
+            ]);
+
+            $rowHasError = false;
+            $rowErrorsList = [];
+
+            if ($validator->fails()) {
+                $rowHasError = true;
+                $rowErrorsList = array_merge($rowErrorsList, $validator->errors()->all());
+            }
+            
+            if (!empty($rowData['code'])) {
+                $codeExisting = School::where('code', $rowData['code'])->first();
+                if ($codeExisting) {
+                    $rowHasError = true;
+                    $rowErrorsList[] = "School with code '{$rowData['code']}' already exists.";
+                }
+            }
+
+            $existing = School::where('name', $rowData['name'])->where('lga', $rowData['lga'])->first();
+            if ($existing) {
+                $rowHasError = true;
+                $rowErrorsList[] = "School already exists (duplicate name and LGA).";
+            }
+
+            if ($rowHasError) {
+                $this->invalidRows++;
+                $this->rowErrors[] = [
+                    'row' => $rowNum,
+                    'errors' => $rowErrorsList
+                ];
+            } else {
+                $this->validRows++;
+            }
+        }
+
+        $this->importToken = md5(time() . uniqid());
+        $this->hasPreview = true;
+    }
+
+    public function confirmImport()
+    {
+        if (!$this->hasPreview || !$this->importToken || !$this->stagedPath) {
+            return;
+        }
+
+        $fullPath = Storage::disk('local')->path($this->stagedPath);
+        if (!file_exists($fullPath)) {
+            $this->addError('csvFile', 'Uploaded file was lost. Please upload again.');
+            return;
+        }
+
+        $fileData = array_map('str_getcsv', file($fullPath));
+        array_shift($fileData); // remove header again
+
+        $createdCount = 0;
+        $skippedCount = 0;
+        $failedCount = 0;
+        $finalErrors = [];
+
+        foreach ($fileData as $index => $row) {
+            if (empty(array_filter($row))) continue;
+
+            $rowNum = $index + 2; 
+
+            $rowData = [];
+            foreach ($this->headers as $colIndex => $colName) {
+                $rowData[$colName] = isset($row[$colIndex]) ? trim($row[$colIndex]) : null;
+            }
+
+            $validator = \Illuminate\Support\Facades\Validator::make($rowData, [
+                'name' => 'required|string|max:255',
+                'lga' => 'required|string',
+                'school_type' => 'required|string',
+                'code' => 'nullable|string',
+            ]);
+
+            if ($validator->fails()) {
+                $failedCount++;
+                $finalErrors[] = ['row' => $rowNum, 'errors' => $validator->errors()->all()];
+                continue;
+            }
+            
+            if (!empty($rowData['code']) && School::where('code', $rowData['code'])->exists()) {
+                $skippedCount++;
+                $finalErrors[] = ['row' => $rowNum, 'errors' => ["School with code '{$rowData['code']}' already exists."]];
+                continue;
+            }
+
+            if (School::where('name', $rowData['name'])->where('lga', $rowData['lga'])->exists()) {
+                $skippedCount++;
+                $finalErrors[] = ['row' => $rowNum, 'errors' => ["School already exists (duplicate name and LGA)."]];
+                continue;
+            }
+
+            try {
+                School::create([
+                    'name' => $rowData['name'],
+                    'code' => $rowData['code'] ?: null,
+                    'school_type' => $rowData['school_type'],
+                    'ownership' => 'public', 
+                    'status' => 'active', 
+                    'lga' => $rowData['lga'],
+                    'ward' => $rowData['ward'] ?? null,
+                    'community' => $rowData['community'] ?? null,
+                    'address' => $rowData['address'] ?? null,
+                    'has_water' => filter_var($rowData['has_water'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                    'has_toilets' => filter_var($rowData['has_toilets'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                    'has_electricity' => filter_var($rowData['has_electricity'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                ]);
+                $createdCount++;
+            } catch (\Exception $e) {
+                $failedCount++;
+                $finalErrors[] = ['row' => $rowNum, 'errors' => ['System error while saving.']];
+            }
+        }
+
+        $this->importSummary = [
+            'created' => $createdCount,
+            'skipped' => $skippedCount,
+            'failed' => $failedCount,
+        ];
+        $this->rowErrors = $finalErrors;
+        
+        $this->hasPreview = false;
+        $this->csvFile = null;
+        $this->importToken = '';
+
+        @unlink($fullPath);
+
+        session()->flash('import_message', "Import complete. $createdCount created, $skippedCount skipped, $failedCount failed.");
     }
 
     public function edit($id)
@@ -108,8 +377,7 @@ class SchoolIndex extends Component
             'code', 'name', 'school_type', 'ownership', 'status',
             'phone', 'email', 'year_established', 'latitude', 'longitude',
             'lga', 'ward', 'community', 'address',
-            'students_male', 'students_female', 'teachers_male', 'teachers_female',
-            'total_classrooms', 'has_water', 'has_toilets', 'has_electricity', 'notes'
+            'has_water', 'has_toilets', 'has_electricity', 'notes'
         ]));
         
         $this->showModal = true;
@@ -167,13 +435,6 @@ class SchoolIndex extends Component
             'ward' => $this->ward,
             'community' => $this->community,
             'address' => $this->address,
-            'students_male' => $this->students_male,
-            'students_female' => $this->students_female,
-            'total_students' => $this->students_male + $this->students_female,
-            'teachers_male' => $this->teachers_male,
-            'teachers_female' => $this->teachers_female,
-            'total_teachers' => $this->teachers_male + $this->teachers_female,
-            'total_classrooms' => $this->total_classrooms,
             'has_water' => $this->has_water,
             'has_toilets' => $this->has_toilets,
             'has_electricity' => $this->has_electricity,
@@ -187,8 +448,6 @@ class SchoolIndex extends Component
             'name' => 'required|string|max:255',
             'lga' => 'required|string',
             'school_type' => 'required|string',
-            'students_male' => 'required|integer|min:0',
-            'students_female' => 'required|integer|min:0',
             'code' => 'nullable|string|unique:schools,code,' . ($this->schoolId ?? 'NULL'),
         ];
 
@@ -200,13 +459,8 @@ class SchoolIndex extends Component
         $this->reset([
             'code', 'name', 'school_type', 'ownership', 'status',
             'phone', 'email', 'year_established', 'lga', 'ward', 'community', 'address',
-            'students_male', 'students_female', 'teachers_male', 'teachers_female',
-            'total_classrooms', 'has_water', 'has_toilets', 'has_electricity', 'notes', 'schoolId'
+            'has_water', 'has_toilets', 'has_electricity', 'notes', 'schoolId'
         ]);
-        $this->students_male = 0;
-        $this->students_female = 0;
-        $this->teachers_male = 0;
-        $this->teachers_female = 0;
     }
 
     private function getLgas()

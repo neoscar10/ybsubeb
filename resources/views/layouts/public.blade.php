@@ -51,9 +51,7 @@
                     <li class="nav-item"><a class="nav-link" href="#mandate">Mandate</a></li>
                     <li class="nav-item"><a class="nav-link" href="#leadership">Leadership</a></li>
                     <li class="nav-item"><a class="nav-link" href="#departments">Depts</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#schools">Schools & Data</a></li>
                     <li class="nav-item"><a class="nav-link" href="#needs">Needs Assessment</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#news">News</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
                 </ul>
                 <a href="{{ route('login') }}" class="btn btn-portal btn-sm ms-2">
@@ -84,7 +82,6 @@
                         <li><a href="#home">Home</a></li>
                         <li><a href="#about">About Us</a></li>
                         <li><a href="#mandate">Mandate</a></li>
-                        <li><a href="#news">News & Updates</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                 </div>

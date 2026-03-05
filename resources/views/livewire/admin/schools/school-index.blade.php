@@ -100,7 +100,10 @@
         <div class="card-header border-0">
             <div class="d-flex align-items-center">
                 <h5 class="card-title mb-0 flex-grow-1">Schools List</h5>
-                <div class="flex-shrink-0">
+                <div class="flex-shrink-0 d-flex gap-2">
+                    <button wire:click="downloadTemplate" class="btn btn-soft-secondary">
+                        <i class="ri-download-2-line align-bottom me-1"></i> Download Template
+                    </button>
                     <button wire:click="create" class="btn btn-success add-btn">
                         <i class="ri-add-line align-bottom me-1"></i> Add School
                     </button>
@@ -173,12 +176,12 @@
                                 <span class="badge bg-info-subtle text-info text-uppercase">{{ str_replace('_', ' ', $school->school_type) }}</span>
                             </td>
                             <td>
-                                <div>{{ $school->total_students }}</div>
-                                <div class="text-muted fs-11">({{ $school->students_male }} / {{ $school->students_female }})</div>
+                                <div>{{ $school->students_count }}</div>
+                                <div class="text-muted fs-11">({{ $school->filtered_male }} / {{ $school->filtered_female }})</div>
                             </td>
                             <td>
-                                <div>{{ $school->total_teachers }}</div>
-                                <div class="text-muted fs-11">({{ $school->teachers_male }} / {{ $school->teachers_female }})</div>
+                                <div>{{ $school->filtered_teachers_male + $school->filtered_teachers_female }}</div>
+                                <div class="text-muted fs-11">({{ $school->filtered_teachers_male }} / {{ $school->filtered_teachers_female }})</div>
                             </td>
                             <td>
                                 @if($school->status === 'active')
@@ -288,29 +291,6 @@
                             </div>
                         </div>
 
-                        <h6 class="fs-14 text-muted mb-3 mt-4">Statistics (Baseline)</h6>
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label class="form-label">Male Students</label>
-                                <input type="number" class="form-control" wire:model="students_male">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Female Students</label>
-                                <input type="number" class="form-control" wire:model="students_female">
-                            </div>
-                             <div class="col-md-3">
-                                <label class="form-label">Male Teachers</label>
-                                <input type="number" class="form-control" wire:model="teachers_male">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Female Teachers</label>
-                                <input type="number" class="form-control" wire:model="teachers_female">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Total Classrooms</label>
-                                <input type="number" class="form-control" wire:model="total_classrooms">
-                            </div>
-                        </div>
 
                         <h6 class="fs-14 text-muted mb-3 mt-4">Infrastructure & Status</h6>
                         <div class="row g-3">
@@ -479,6 +459,192 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" wire:click="$set('showViewModal', false)">Close</button>
                     <button type="button" class="btn btn-primary" wire:click="edit({{ $viewSchool->id }})">Edit School</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Choice Modal -->
+    @if($showChoiceModal)
+    <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fs-15">How would you like to add schools?</h5>
+                    <button type="button" class="btn-close" wire:click="$set('showChoiceModal', false)"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <button type="button" class="btn btn-success w-100 mb-3" wire:click="chooseSingle">
+                        <i class="ri-building-line align-middle me-2"></i> Add Single School
+                    </button>
+                    <p class="text-muted fs-12 mb-4">Add one school manually using the form.</p>
+                    
+                    <button type="button" class="btn btn-soft-secondary w-100 mb-2" wire:click="chooseBulk">
+                        <i class="ri-file-excel-2-line align-middle me-2"></i> Upload CSV (Multiple)
+                    </button>
+                    <p class="text-muted fs-12 mb-0">Upload a spreadsheet containing multiple schools.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Bulk Upload Modal -->
+    @if($showBulkModal)
+    <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Bulk School Upload</h5>
+                    <button type="button" class="btn-close" wire:click="$set('showBulkModal', false)"></button>
+                </div>
+                <div class="modal-body">
+                    @if(session()->has('import_message'))
+                        <div class="alert alert-info">
+                            {{ session('import_message') }}
+                        </div>
+                    @endif
+
+                    @if($importSummary !== null)
+                        <!-- Phase 3: Results Summary -->
+                        <div class="text-center mb-4">
+                            <h5 class="fs-16">Import Summary</h5>
+                            <div class="d-flex justify-content-center gap-4 mt-3">
+                                <div>
+                                    <h3 class="text-success mb-0">{{ $importSummary['created'] }}</h3>
+                                    <span class="text-muted fs-12">Created</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-warning mb-0">{{ $importSummary['skipped'] }}</h3>
+                                    <span class="text-muted fs-12">Skipped</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-danger mb-0">{{ $importSummary['failed'] }}</h3>
+                                    <span class="text-muted fs-12">Failed</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if(!empty($rowErrors))
+                            <div class="mt-3">
+                                <h6 class="fs-14">Issues Found ({{ count($rowErrors) }})</h6>
+                                <div style="max-height: 200px; overflow-y: auto;" class="border rounded p-2 bg-light">
+                                    <ul class="list-unstyled mb-0 fs-12">
+                                        @foreach(array_slice($rowErrors, 0, 10) as $err)
+                                            <li class="mb-1 text-danger">
+                                                <strong>Row {{ $err['row'] }}:</strong> {{ implode(', ', $err['errors']) }}
+                                            </li>
+                                        @endforeach
+                                        @if(count($rowErrors) > 10)
+                                            <li class="text-muted fst-italic mt-2">...and {{ count($rowErrors) - 10 }} more rows with issues.</li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            </div>
+                        @else
+                            <div class="alert alert-success fs-14 text-center mt-3">
+                                <i class="ri-check-double-line text-success fs-18 align-middle me-1"></i> All rows processed successfully!
+                            </div>
+                        @endif
+
+                        <div class="mt-4 text-center">
+                            <button type="button" class="btn btn-success" wire:click="$set('showBulkModal', false)">Done</button>
+                        </div>
+
+                    @elseif($hasPreview)
+                        <!-- Phase 2: Preview -->
+                        <div class="mb-3">
+                            <h6 class="fs-14">Data Preview</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-primary-subtle text-primary">Total: {{ $totalRows }} rows</span>
+                                <span class="badge bg-success-subtle text-success">Valid: {{ $validRows }} rows</span>
+                                @if($invalidRows > 0)
+                                    <span class="badge bg-danger-subtle text-danger">Invalid: {{ $invalidRows }} rows</span>
+                                @endif
+                            </div>
+                            
+                            <div class="table-responsive border rounded" style="max-height: 250px;">
+                                <table class="table table-sm table-nowrap mb-0 fs-12">
+                                    <thead class="table-light sticky-top">
+                                        <tr>
+                                            <th>#</th>
+                                            @foreach($headers as $h)
+                                                <th>{{ $h }}</th>
+                                            @endforeach
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($previewRows as $i => $row)
+                                        <tr>
+                                            <td>{{ $i + 1 }}</td>
+                                            @foreach($headers as $h)
+                                                <td>{{ $row[$h] ?? '-' }}</td>
+                                            @endforeach
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            @if($totalRows > count($previewRows))
+                                <p class="text-muted fs-11 mt-1">Showing first {{ count($previewRows) }} of {{ $totalRows }} rows.</p>
+                            @endif
+                        </div>
+
+                        @if($invalidRows > 0)
+                            <div class="mb-3 border rounded border-danger">
+                                <div class="bg-danger-subtle border-bottom border-danger p-2">
+                                    <h6 class="fs-13 text-danger mb-0">Rows with issues ({{ $invalidRows }})</h6>
+                                </div>
+                                <div style="max-height: 150px; overflow-y: auto;" class="p-2 bg-light">
+                                    <ul class="list-unstyled mb-0 fs-12">
+                                        @foreach(array_slice($rowErrors, 0, 20) as $err)
+                                            <li class="mb-1 text-danger">
+                                                <strong>Row {{ $err['row'] }}:</strong> {{ implode(', ', $err['errors']) }}
+                                            </li>
+                                        @endforeach
+                                        @if(count($rowErrors) > 20)
+                                            <li class="text-muted fst-italic mt-2">...and {{ count($rowErrors) - 20 }} more rows with issues.</li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-outline-secondary" wire:click="replaceFile">Back / Replace File</button>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-light" wire:click="$set('showBulkModal', false)">Cancel</button>
+                                <button type="button" class="btn btn-primary" wire:click="confirmImport" @if($validRows === 0) disabled @endif wire:loading.attr="disabled" wire:target="confirmImport">
+                                    <span wire:loading.remove wire:target="confirmImport">Confirm & Import</span>
+                                    <span wire:loading wire:target="confirmImport"><span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Importing...</span>
+                                </button>
+                            </div>
+                        </div>
+
+                    @else
+                        <!-- Phase 1: Upload Form -->
+                        <div class="alert alert-warning fs-13">
+                            <strong>Instructions:</strong> First download the sample template. Fill and keep column names unchanged. 
+                            The system maps columns based exactly on the header names.
+                        </div>
+
+                        <form wire:submit.prevent="stageCsvForPreview">
+                            <div class="mb-3">
+                                <label class="form-label">Select CSV File <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" wire:model="csvFile" accept=".csv">
+                                @error('csvFile') <span class="text-danger fs-12">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="mt-4 d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-light" wire:click="$set('showBulkModal', false)">Cancel</button>
+                                <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="stageCsvForPreview, csvFile">
+                                    <span wire:loading.remove wire:target="stageCsvForPreview">Preview File</span>
+                                    <span wire:loading wire:target="stageCsvForPreview"><span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Reading file...</span>
+                                </button>
+                            </div>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>

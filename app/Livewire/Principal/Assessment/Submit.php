@@ -266,6 +266,16 @@ class Submit extends Component
          }
     }
 
+    public function removeNewAttachment($index)
+    {
+        if ($this->assessment->status !== 'draft') return; // Guard
+
+        if (isset($this->newAttachments[$index])) {
+            unset($this->newAttachments[$index]);
+            $this->newAttachments = array_values($this->newAttachments);
+        }
+    }
+
     // --- Submission ---
 
     public function confirmSubmit()

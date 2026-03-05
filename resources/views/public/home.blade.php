@@ -36,8 +36,9 @@
                 <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
             </div>
             <div class="carousel-inner">
-                <!-- Slide 1 -->
-                <div class="carousel-item active" style="background-image: url('{{ asset('assets/hero-1.jpg') }}');">
+                <!-- Hero images: Wikimedia Commons (Nigeria). Licenses: PD / CC BY-SA. See sources in repository docs. -->
+                <!-- Slide 1: Public school classroom in Nigeria -->
+                <div class="carousel-item active" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/a/a0/A_classroom_of_students_%287138907393%29.jpg');">
                     <div class="hero-overlay">
                         <div class="container">
                             <div class="hero-content">
@@ -48,8 +49,8 @@
                         </div>
                     </div>
                 </div>
-                <!-- Slide 2 -->
-                <div class="carousel-item" style="background-image: url('{{ asset('assets/hero-2.jpg') }}');">
+                <!-- Slide 2: Children learning in Nigeria -->
+                <div class="carousel-item" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/a/a4/Learning_to_read_and_write%2C_Nigeria_%2838758529475%29.jpg');">
                     <div class="hero-overlay">
                         <div class="container">
                             <div class="hero-content">
@@ -60,8 +61,8 @@
                         </div>
                     </div>
                 </div>
-                <!-- Slide 3 -->
-                <div class="carousel-item" style="background-image: url('{{ asset('assets/hero-3.jpg') }}');">
+                <!-- Slide 3: Digital classroom in Nigeria -->
+                <div class="carousel-item" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Introducing_digital_classroom.jpg');">
                     <div class="hero-overlay">
                         <div class="container">
                             <div class="hero-content">
@@ -144,7 +145,8 @@
                     <a href="#" class="btn btn-outline-success mt-3">Read More About Us</a>
                 </div>
                 <div class="col-lg-6">
-                    <img src="https://via.placeholder.com/600x400/f8f9fa/006400?text=About+SUBEB+Image" alt="About SUBEB" class="img-fluid rounded shadow">
+                    <!-- About image source: Unsplash -->
+                    <img src="https://images.unsplash.com/flagged/photo-1579133311477-9121405c78dd?auto=format&fit=crop&fm=jpg&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YWZyaWNhJTIwc2Nob29sfGVufDB8fDB8fHww&ixlib=rb-4.1.0&q=60&w=3000" alt="African school children" loading="lazy" class="img-fluid rounded shadow" style="width:100%;height:100%;object-fit:cover;object-position:center;">
                 </div>
             </div>
         </div>
@@ -215,11 +217,11 @@
                 <!-- Chairman -->
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 text-center p-3">
-                        <img src="https://via.placeholder.com/150x150/e9ecef/333?text=Photo" class="rounded-circle mx-auto mb-3" alt="Chairman" style="width: 150px; height: 150px; object-fit: cover;">
+                        <img src="https://ui-avatars.com/api/?name=Umaru+Hassan+Babayo&size=512&background=0B6623&color=ffffff&bold=true" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Umaru+Hassan+Babayo&size=512&background=0B6623&color=ffffff&bold=true';" class="rounded-circle mx-auto mb-3" alt="Chairman" loading="lazy" style="width: 150px; height: 150px; object-fit: cover;">
                         <div class="card-body">
-                            <h5 class="card-title fw-bold">Prof. Musa Aliyu</h5>
+                            <h5 class="card-title fw-bold">Alhaji Umaru Hassan Babayo</h5>
                             <p class="text-success fw-bold mb-2">Executive Chairman</p>
-                            <p class="card-text small text-muted">Leading the vision for educational transformation in Yobe State with over 20 years of academic and administrative experience.</p>
+                            <p class="card-text small text-muted">Providing leadership and strategic direction for basic education delivery across Yobe State.</p>
                             <a href="#" class="btn btn-sm btn-outline-secondary">View Profile</a>
                         </div>
                     </div>
@@ -227,11 +229,11 @@
                 <!-- Executive Secretary -->
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 text-center p-3">
-                        <img src="https://via.placeholder.com/150x150/e9ecef/333?text=Photo" class="rounded-circle mx-auto mb-3" alt="Secretary" style="width: 150px; height: 150px; object-fit: cover;">
+                        <img src="https://ui-avatars.com/api/?name=Isa+Shettima&size=512&background=6c757d&color=ffffff&bold=true" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Isa+Shettima&size=512&background=6c757d&color=ffffff&bold=true';" class="rounded-circle mx-auto mb-3" alt="Secretary" loading="lazy" style="width: 150px; height: 150px; object-fit: cover;">
                         <div class="card-body">
-                            <h5 class="card-title fw-bold">Dr. Fatima Ibrahim</h5>
+                            <h5 class="card-title fw-bold">Isa Shettima</h5>
                             <p class="text-success fw-bold mb-2">Executive Secretary</p>
-                            <p class="card-text small text-muted">Overseeing the day-to-day administration and implementation of board policies and UBEC interventions.</p>
+                            <p class="card-text small text-muted">Overseeing day-to-day administration and coordination of board activities and UBEC interventions.</p>
                             <a href="#" class="btn btn-sm btn-outline-secondary">View Profile</a>
                         </div>
                     </div>
@@ -239,11 +241,11 @@
                 <!-- Director 1 -->
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 text-center p-3">
-                        <img src="https://via.placeholder.com/150x150/e9ecef/333?text=Photo" class="rounded-circle mx-auto mb-3" alt="Director" style="width: 150px; height: 150px; object-fit: cover;">
+                        <img src="https://ui-avatars.com/api/?name=Name+Unknown&size=512&background=6c757d&color=ffffff&bold=true" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Name+Unknown&size=512&background=6c757d&color=ffffff&bold=true';" class="rounded-circle mx-auto mb-3" alt="Director" loading="lazy" style="width: 150px; height: 150px; object-fit: cover;">
                         <div class="card-body">
-                            <h5 class="card-title fw-bold">Alh. Sani Ahmed</h5>
+                            <h5 class="card-title fw-bold">Name unknown</h5>
                             <p class="text-success fw-bold mb-2">Director, Planning & Statistics</p>
-                            <p class="card-text small text-muted">Spearheading data-driven strategies for school placement, enrollment, and resource allocation.</p>
+                            <p class="card-text small text-muted">Driving data-led planning, statistics, and resource allocation for improved school outcomes.</p>
                             <a href="#" class="btn btn-sm btn-outline-secondary">View Profile</a>
                         </div>
                     </div>
@@ -317,128 +319,7 @@
         </div>
     </section>
 
-    <!-- I) PROGRAMMES / INTERVENTIONS -->
-    <section id="programmes">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Key Interventions</h2>
-                <p class="text-muted">Ongoing programmes to uplift education standards.</p>
-            </div>
-            <div class="row">
-                <div class="col-md-6 offset-md-3">
-                    <div class="timeline-item">
-                        <h5>Whole School Rehabilitation</h5>
-                        <p class="text-muted small">Comprehensive renovation of dilapidated school structures across 17 LGAs.</p>
-                    </div>
-                    <div class="timeline-item">
-                        <h5>Teacher Professional Development (TPD)</h5>
-                        <p class="text-muted small">Quarterly training workshops for teachers on modern pedagogical methods and ICT.</p>
-                    </div>
-                    <div class="timeline-item">
-                        <h5>Better Education Service Delivery for All (BESDA)</h5>
-                        <p class="text-muted small">World Bank supported programme to reduce out-of-school children and improve literacy.</p>
-                    </div>
-                    <div class="timeline-item">
-                        <h5>School Feeding Programme</h5>
-                        <p class="text-muted small">Provision of nutritious meals to pupils to encourage enrollment and retention.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- J) SCHOOLS & DATA -->
-    <section id="schools" class="bg-light-gray">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 class="section-title mb-0">Schools & Data</h2>
-                    <p class="text-muted small mb-0">Transparent access to school statistics.</p>
-                </div>
-                <span class="badge bg-success">Last Updated: Dec 2025</span>
-            </div>
-
-            <!-- Filter UI -->
-            <div class="card p-3 mb-4">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <select class="form-select">
-                            <option selected>Select LGA...</option>
-                            <option>Damaturu</option>
-                            <option>Potiskum</option>
-                            <option>Bade</option>
-                            <!-- Add LGAs -->
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select">
-                            <option selected>School Type...</option>
-                            <option>Primary</option>
-                            <option>JSS</option>
-                            <option>Nomadic</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" placeholder="Search school name...">
-                    </div>
-                    <div class="col-md-2">
-                        <button id="applyFilter" class="btn btn-success w-100">Apply Filter</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Data Table -->
-            <div class="table-responsive bg-white shadow-sm">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>School Name</th>
-                            <th>LGA</th>
-                            <th>Type</th>
-                            <th>Pupils (M/F)</th>
-                            <th>Teachers</th>
-                            <th>Classrooms</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Placeholder Rows -->
-                        <tr>
-                            <td>Central Primary School Damaturu</td>
-                            <td>Damaturu</td>
-                            <td>Primary</td>
-                            <td>1,200 (600/600)</td>
-                            <td>45</td>
-                            <td>20</td>
-                            <td><span class="badge bg-success">Active</span></td>
-                        </tr>
-                        <tr>
-                            <td>Model JSS Potiskum</td>
-                            <td>Potiskum</td>
-                            <td>JSS</td>
-                            <td>850 (400/450)</td>
-                            <td>30</td>
-                            <td>15</td>
-                            <td><span class="badge bg-success">Active</span></td>
-                        </tr>
-                        <tr>
-                            <td>Gashua Nomadic School</td>
-                            <td>Bade</td>
-                            <td>Nomadic</td>
-                            <td>150 (80/70)</td>
-                            <td>5</td>
-                            <td>4</td>
-                            <td><span class="badge bg-warning text-dark">Needs Renovation</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="mt-3 text-end">
-                <small class="text-muted me-3">Data verified by PRS Department.</small>
-                <a href="#" class="text-success text-decoration-none small"><i class="bi bi-exclamation-circle"></i> Request Data Correction</a>
-            </div>
-        </div>
-    </section>
 
     <!-- K) NEEDS ASSESSMENT -->
     <section id="needs">
@@ -526,116 +407,7 @@
         </div>
     </section>
 
-    <!-- L) REPORTS & DOWNLOADS -->
-    <section id="reports" class="bg-light-gray">
-        <div class="container">
-            <h2 class="section-title mb-4">Reports & Downloads</h2>
-            <div class="row g-3">
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h6 class="card-title"><i class="bi bi-file-earmark-pdf text-danger me-2"></i> Annual Report 2024</h6>
-                            <p class="small text-muted mb-3">Comprehensive summary of activities.</p>
-                            <a href="#" class="btn btn-sm btn-outline-dark w-100">Download (2.5MB)</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h6 class="card-title"><i class="bi bi-file-earmark-excel text-success me-2"></i> School Census Data</h6>
-                            <p class="small text-muted mb-3">Raw data of schools and enrollment.</p>
-                            <a href="#" class="btn btn-sm btn-outline-dark w-100">Download (500KB)</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h6 class="card-title"><i class="bi bi-file-text text-primary me-2"></i> Procurement Guidelines</h6>
-                            <p class="small text-muted mb-3">Standard bidding documents.</p>
-                            <a href="#" class="btn btn-sm btn-outline-dark w-100">Download (1.2MB)</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h6 class="card-title"><i class="bi bi-file-earmark-pdf text-danger me-2"></i> Needs Assessment Summary</h6>
-                            <p class="small text-muted mb-3">Report on identified gaps.</p>
-                            <a href="#" class="btn btn-sm btn-outline-dark w-100">Download (3.0MB)</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- M) NEWS -->
-    <section id="news">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="section-title mb-0">Latest News</h2>
-                <a href="#" class="btn btn-outline-success btn-sm">View All News</a>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <img src="https://via.placeholder.com/400x250/e9ecef/333?text=News+Image" class="card-img-top" alt="News">
-                        <div class="card-body">
-                            <span class="badge bg-success mb-2">Projects</span>
-                            <h5 class="card-title">SUBEB Commissions 50 New Classrooms</h5>
-                            <p class="card-text small text-muted">The Executive Chairman flagged off the commissioning of newly constructed classrooms in Damaturu...</p>
-                            <p class="card-text"><small class="text-muted">Dec 15, 2025</small></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <img src="https://via.placeholder.com/400x250/e9ecef/333?text=News+Image" class="card-img-top" alt="News">
-                        <div class="card-body">
-                            <span class="badge bg-warning text-dark mb-2">Training</span>
-                            <h5 class="card-title">Teacher Professional Development Workshop</h5>
-                            <p class="card-text small text-muted">Over 500 teachers participated in the 3-day workshop on modern teaching techniques...</p>
-                            <p class="card-text"><small class="text-muted">Dec 10, 2025</small></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <img src="https://via.placeholder.com/400x250/e9ecef/333?text=News+Image" class="card-img-top" alt="News">
-                        <div class="card-body">
-                            <span class="badge bg-info text-dark mb-2">Policy</span>
-                            <h5 class="card-title">New Guidelines for School Feeding</h5>
-                            <p class="card-text small text-muted">The Board has released new operational guidelines to ensure quality and hygiene...</p>
-                            <p class="card-text"><small class="text-muted">Dec 05, 2025</small></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- N) GALLERY -->
-    <section id="gallery" class="bg-light-gray">
-        <div class="container">
-            <h2 class="section-title mb-4">Photo Gallery</h2>
-            <div class="row g-2">
-                <div class="col-6 col-md-3">
-                    <img src="https://via.placeholder.com/300x300/e9ecef/333?text=Gallery+1" class="img-fluid rounded" alt="Gallery">
-                </div>
-                <div class="col-6 col-md-3">
-                    <img src="https://via.placeholder.com/300x300/e9ecef/333?text=Gallery+2" class="img-fluid rounded" alt="Gallery">
-                </div>
-                <div class="col-6 col-md-3">
-                    <img src="https://via.placeholder.com/300x300/e9ecef/333?text=Gallery+3" class="img-fluid rounded" alt="Gallery">
-                </div>
-                <div class="col-6 col-md-3">
-                    <img src="https://via.placeholder.com/300x300/e9ecef/333?text=Gallery+4" class="img-fluid rounded" alt="Gallery">
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- O) CONTACT US -->
     <section id="contact">
