@@ -57,9 +57,9 @@
                 </div>
             </div>
         @elseif($windowClosed)
-            <div class="alert alert-danger" role="alert">
+            <!-- <div class="alert alert-danger" role="alert">
                 <strong>Submission Closed:</strong> The submission window for "{{ $window->title }}" has closed. You can no longer edit your assessment.
-            </div>
+            </div> -->
         @endif
 
         @if($assessment)

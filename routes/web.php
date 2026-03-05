@@ -103,7 +103,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // School Profile (Principal)
     Route::get('/principal/school', function () {
-        return view('admin.placeholder', ['title' => 'My School Profile', 'description' => 'Manage your school details and staff overview.']);
+        return view('principal.school.index');
     })->name('principal.school.profile')->middleware('role:principal');
 
     // Submit Assessment (Principal)

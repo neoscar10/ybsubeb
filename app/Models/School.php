@@ -27,6 +27,7 @@ class School extends Model
         'total_students',
         'total_teachers',
         'total_classrooms',
+        'total_classes',
         'students_male',
         'students_female',
         'teachers_male',
